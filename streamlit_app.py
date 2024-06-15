@@ -96,3 +96,73 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 chart = alt.Chart()
+
+# kodreszlet 3
+import plotly.express as px
+import streamlit as st
+
+# Színezéshez a hitelképesség átnevezése
+df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
+
+# 1. Vizualizáció: Családi állapot, Évek a foglalkozásban és Lakóhely típusa
+fig1 = px.scatter_3d(df, 
+                     x='Family_status', 
+                     y='Years_employed', 
+                     z='Housing_type', 
+                     color='Hitelképesség',
+                     title='Családi állapot, Évek a foglalkozásban és Lakóhely típusa közötti összefüggések hitelképességgel',
+                     labels={
+                         'Family_status': 'Családi állapot',
+                         'Years_employed': 'Évek a foglalkozásban',
+                         'Housing_type': 'Lakóhely típusa',
+                         'Hitelképesség': 'Hitelképesség'
+                     },
+                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
+                    )
+
+# 2. Vizualizáció: Jövedelem, Végzettség és Évek a foglalkozásban
+fig2 = px.scatter_3d(df, 
+                     x='Total_income', 
+                     y='Education_type', 
+                     z='Years_employed', 
+                     color='Hitelképesség',
+                     title='Jövedelem, Végzettség és Évek a foglalkozásban közötti összefüggések hitelképességgel',
+                     labels={
+                         'Total_income': 'Jövedelem',
+                         'Education_type': 'Végzettség',
+                         'Years_employed': 'Évek a foglalkozásban',
+                         'Hitelképesség': 'Hitelképesség'
+                     },
+                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
+                    )
+
+# Streamlit oldalon való megjelenítés
+st.plotly_chart(fig1)
+st.plotly_chart(fig2)
+
+#kodreszlet4
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+
+# Hitelképesség megjelölése
+df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
+
+# Streamlit cím
+st.title("Jövedelem típus és végzettség összefüggése hitelképesség alapján")
+
+# Grouped Bar Chart létrehozása
+fig = px.bar(
+    df,
+    x='Income_type',
+    y='ID',  # Számolja meg az egyéneket
+    color='Hitelképesség',
+    barmode='group',
+    facet_col='Education_type',
+    labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus', 'Education_type': 'Végzettség'},
+    title='Jövedelem típus és végzettség összefüggése hitelképesség alapján'
+)
+
+# Diagram megjelenítése
+st.plotly_chart(fig)
+
