@@ -2,8 +2,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import altair as alt
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import plotly.express as px
+
 
 st.set_page_config(page_title='Hitelkártya jogosultságot meghatározó tényezők', page_icon='📊')
 st.title('📊 Hitelkártya jogosultságot meghatározó tényezők')
@@ -55,65 +55,33 @@ st.altair_chart(gender_chart, use_container_width=True)
 
 st.markdown('Hitelkártya jogosultsági szempontból a nemek eloszlásának szemléltetése az elemzésben segítséget nyújt abban, hogy meglássuk, mely nemek képviselői jelentkeznek gyakrabban hitelkártyákért. Ez a tudás lehetővé teszi a pénzintézetek számára, hogy jobban megértsék és célzottabban alakítsák ki a hitelkártya ajánlataikat és marketing stratégiáikat, figyelembe véve a nemek közötti pénzügyi szokások és igények különbségeit.')
   
-# # Csoportos oszlopdiagram létrehozása
-# fig = plt.figure(figsize=(10, 8))
-# ax = fig.add_subplot(111, projection='3d')
-
-# for (family_status, years_employed), group in df.groupby(['Family_status', 'Years_employed']):
-#     approval_counts = group['Target'].value_counts(normalize=True).sort_index()
-#     approval_counts.plot(kind='bar', color=['green', 'red'], alpha=0.7, ax=ax, label=f"{family_status}, {years_employed} years")
-
-# ax.set_xlabel('Family Status')
-# ax.set_ylabel('Years Employed')
-# ax.set_zlabel('Credit Approval')
-
-# plt.legend()
-# plt.title('Relationship between Family Status, Years Employed, Housing Type and Credit Approval')
-# plt.tight_layout()
-
-# plt.show()
 
 st.subheader('A változok közötti kapcsolatok tanulmányozása')
 
-# kodreszlet 2
-import plotly.graph_objects as go
+#2
+df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
 
-# Három dimenzió: Családi állapot, Évek a foglalkozásban, Lakóhely típusa
-csaladi_allapot = df['Family_status'].unique()
-evek_foglalkozasban = df['Years_employed'].unique()
-lakohely_tipus = df['Housing_type'].unique()
+# Streamlit cím
+st.title("Végzettség és hitelképesség összefüggése")
 
-# Hitelképesség színezés szerint
-df['Color'] = df['Target'].replace({0: 'red', 1: 'green'})
-
-# 3D Surface Plot létrehozása
-fig = go.Figure(data=[go.Surface(
-    x=df['Family_status'],
-    y=df['Years_employed'],
-    z=df['Housing_type'],
-    colorscale='Viridis',  # Színskála beállítása
-    colorbar=dict(title='Hitelképesség'),
-)])
-
-# Grafikon beállításai
-fig.update_layout(
-    title='Családi állapot, Évek a foglalkozásban és Lakóhely típusa közötti összefüggések hitelképességgel',
-    scene=dict(
-        xaxis_title='Családi állapot',
-        yaxis_title='Évek a foglalkozásban',
-        zaxis_title='Lakóhely típusa',
-    )
+# Grouped Bar Chart létrehozása
+fig = px.bar(
+    df,
+    x='Education_type',
+    y='ID',  # Számolja meg az egyéneket
+    color='Hitelképesség',
+    barmode='group',
+    labels={'ID': 'Egyének száma', 'Education_type': 'Végzettség'},
+    #title='Végzettség és hitelképesség összefüggése'
 )
+# Diagram megjelenítése
 st.plotly_chart(fig)
 
-chart = alt.Chart()
+st.markdown('')
 
-st.markdown('A családi állapot,foglalkozás és lakóhely típusa közötti összefüggéseket a hitelképességgel kapcsolatban a háromdimenziós felületi diagram szemléltet. Az eredmények alapján megállapíthatjuk, hogy például házas családos emberek esetében gyakran jobb a hitelképesség, míg egyedülállók vagy élettársakkal élők körében ez eltérhet. Emellett a hosszabb munkaviszony gyakran kedvező hatással van a hitelképességre, míg a rövidebb foglalkoztatási időszakok esetén magasabb lehet a kockázat. A lakóhely típusa (például városi vagy vidéki) szintén jelentős tényező lehet: a nagyvárosokban élők esetében esetlegesen jobb a hitelképesség, mivel magasabb jövedelmi szint és stabilitás tapasztalható.')
-
-
+# Diagram megjelenítése
+st.plotly_chart(fig)
 # kodreszlet 3
-import plotly.express as px
-import streamlit as st
 
 # Színezéshez a hitelképesség átnevezése
 df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
@@ -135,7 +103,7 @@ fig1 = px.scatter_3d(df,
                     )
 
 st.plotly_chart(fig1)
-st.markdown('A vizualizáció szemlélteti, hogyan befolyásolják a családi állapot, évek a  foglalkozásban és lakóhely típusa a hitelképességet, külön kiemelve a jóváhagyott és elutasított hitelképességeket.A vizualizációk alapján számos fontos következtetést vonhatunk le a családi állapot, évek a foglalkozásban és lakóhely típusa közötti összefüggésekről a hitelképességgel kapcsolatban. Először is, látható, hogy bizonyos családi állapotok és hosszú távú munkatapasztalat jobb hitelképességet eredményezhetnek, míg másoknál ez gyengébb lehet. Ez arra utal, hogy ezek a társadalmi-gazdasági tényezők meghatározó szerepet játszanak az egyének pénzügyi stabilitásában és hitelminősítésében. Az összefüggések tanulmányozása lehetővé teszi a pénzügyi szolgáltatók számára, hogy mélyebben megértsék, milyen társadalmi-gazdasági tényezők játszanak szerepet az egyének pénzügyi stabilitásában és hitelképességében.')
+st.markdown('A vizualizáció szemlélteti, hogyan befolyásolják a családi állapot, évek a  foglalkozásban és lakóhely típusa a hitelképességet, külön kiemelve a jóváhagyott és elutasított hitelképességeket.Az eredmények alapján megállapíthatjuk, hogy például házas családos emberek esetében gyakran jobb a hitelképesség, míg egyedülállók vagy élettársakkal élők körében ez eltérhet. Emellett a hosszabb munkaviszony gyakran kedvező hatással van a hitelképességre, míg a rövidebb foglalkoztatási időszakok esetén magasabb lehet a kockázat. A lakóhely típusa (például városi vagy vidéki) szintén jelentős tényező lehet: a nagyvárosokban élők esetében esetlegesen jobb a hitelképesség, mivel magasabb jövedelmi szint és stabilitás tapasztalható.')
 
 # 2. Vizualizáció: Jövedelem, Végzettség és Évek a foglalkozásban
 fig2 = px.scatter_3d(df, 
@@ -153,18 +121,10 @@ fig2 = px.scatter_3d(df,
                      color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
                     )
 
-
-st.markdown('A második vizualizáció fókuszában a jövedelem, végzettség és évek a foglalkozásban szerepelnek, és ezek kapcsán mutatja be, hogyan határozzák meg ezek a tényezők az egyén hitelképességét. Azok az egyének, akik magasabb jövedelemmel rendelkeznek és jobb végzettséggel bírnak stabilabb hitelképességgel rendelkeznek. Ez annak tudható be, hogy ezek az emberek képesek hatékonyan kezelni pénzügyi kötelezettségeiket és hosszú távú pénzügyi stabilitást biztosítani számukra.')
-# Streamlit oldalon való megjelenítés
-st.plotly_chart(fig1)
 st.plotly_chart(fig2)
-
-
+st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem. Azok az egyének, akik magasabb jövedelemmel rendelkeznek és jobb végzettséggel bírnak stabilabb hitelképességgel rendelkeznek.')
 
 #kodreszlet4
-import pandas as pd
-import plotly.express as px
-import streamlit as st
 
 # Hitelképesség megjelölése
 df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
@@ -187,13 +147,12 @@ fig = px.bar(
 # Diagram megjelenítése
 st.plotly_chart(fig)
 
-st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem.')
+st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. \
+            A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek \
+            szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének\
+             mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem.')
         
 #pleda5 
-import pandas as pd
-import plotly.express as px
-import streamlit as st
-
 
 # Hitelképesség megjelölése
 df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
@@ -278,9 +237,6 @@ fig = px.density_heatmap(
 st.plotly_chart(fig)
 
 #kodreszlet3
-import pandas as pd
-import plotly.express as px
-import streamlit as st
 
 # Hitelképesség megjelölése
 df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
