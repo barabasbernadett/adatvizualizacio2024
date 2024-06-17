@@ -5,8 +5,8 @@ import altair as alt
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-st.set_page_config(page_title='Hitelkártya jogosultságot megghatározó tényezők', page_icon='📊')
-st.title('📊 Hitelkártya jogosultságot megghatározó tényezők')
+st.set_page_config(page_title='Hitelkártya jogosultságot meghatározó tényezők', page_icon='📊')
+st.title('📊 Hitelkártya jogosultságot meghatározó tényezők')
 
 with st.expander('About this app'):
   st.markdown('**What can this app do?**')
@@ -15,13 +15,12 @@ with st.expander('About this app'):
   st.warning('To engage with the app, 1. Select genres of your interest in the drop-down selection box and then 2. Select the year duration from the slider widget. As a result, this should generate an updated editable DataFrame and line plot.')
   
 st.subheader('Adatok')
-
-st.subheader('Bevezető')
-st.info('A projekt célja a hitelkártya-jogosultsági adatbázis részletes elemzése, amely megvilágítja, hogy mely tényezők befolyásolják az egyén hitelkártya-igénylésének sikerességét. Az elemzés célja, hogy megértsük a hitelképességet befolyásoló különböző demográfiai, pénzügyi és személyes tényezőket, és ezek alapján fejlesszünk ki jobb hitelbírálati stratégiákat és célzott marketingkampányokat.')
-st.info('Az elemzéshez használt adatok egy átfogó hitelkártya-jogosultsági adatbázisból származnak, amely tartalmazza az egyes igénylők demográfiai jellemzőit (például kor, nem), pénzügyi mutatóit (például jövedelem, foglalkoztatási idő), valamint személyes adatokat (például családi állapot, lakhatási körülmények). Az adatok több mint 1000 egyénről gyűjtött információkat tartalmaznak, és változókat tartalmaznak, mint például: ID, Kor, nem , végzettség, családi állapot, lakhatási típus, hitelképesség.')     
-
 df = pd.read_csv('dataset/creditcard_eligibility_dataset.csv')
 st.write(df)
+
+st.subheader('Bevezető')
+st.markdown('A projekt célja a hitelkártya-jogosultsági adatbázis részletes elemzése, amely megvilágítja, hogy mely tényezők befolyásolják az egyén hitelkártya-igénylésének sikerességét. Az elemzés célja, hogy megértsük a hitelképességet befolyásoló különböző demográfiai, pénzügyi és személyes tényezőket, és ezek alapján fejlesszünk ki jobb hitelbírálati stratégiákat és célzott marketingkampányokat.')
+st.markdown('Az elemzéshez használt adatok egy átfogó hitelkártya-jogosultsági adatbázisból származnak, amely tartalmazza az egyes igénylők demográfiai jellemzőit (például kor, nem), pénzügyi mutatóit (például jövedelem, foglalkoztatási idő), valamint személyes adatokat (például családi állapot, lakhatási körülmények). Az adatok több mint 1000 egyénről gyűjtött információkat tartalmaznak, és változókat tartalmaznak, mint például: ID, Kor, nem , végzettség, családi állapot, lakhatási típus, hitelképesség.')     
 
 st.subheader('Demográfiai változok')
 
@@ -38,7 +37,7 @@ age_hist = alt.Chart(df).mark_bar().encode(
 # Display Age Distribution Histogram
 st.altair_chart(age_hist, use_container_width=True)
 
-st.info('A korosztály szerinti eloszlás elemzése lehetővé teszi, hogy azonosítsuk azokat a korcsoportokat, amelyek dominálnak a hiteligénylők között és leginkább érdeklődnek a hitelkártyák irénylésére és segít abban, hogy felismerjük, mely korosztályok kevésbé képviselték magukat a hitelpiacon.')
+st.markdown('A korosztály szerinti eloszlás elemzése lehetővé teszi, hogy azonosítsuk azokat a korcsoportokat, amelyek dominálnak a hiteligénylők között és leginkább érdeklődnek a hitelkártyák irénylésére és segít abban, hogy felismerjük, mely korosztályok kevésbé képviselték magukat a hitelpiacon.')
 
 
 # Displaying gender distribution using a count bar chart
@@ -54,7 +53,7 @@ gender_chart = alt.Chart(df).mark_bar().encode(
 ).interactive()
 st.altair_chart(gender_chart, use_container_width=True)
 
-st.info('Hitelkártya jogosultsági szempontból a nemek eloszlásának szemléltetése az elemzésben segítséget nyújt abban, hogy meglássuk, mely nemek képviselői jelentkeznek gyakrabban hitelkártyákért. Ez a tudás lehetővé teszi a pénzintézetek számára, hogy jobban megértsék és célzottabban alakítsák ki a hitelkártya ajánlataikat és marketing stratégiáikat, figyelembe véve a nemek közötti pénzügyi szokások és igények különbségeit.')
+st.markdown('Hitelkártya jogosultsági szempontból a nemek eloszlásának szemléltetése az elemzésben segítséget nyújt abban, hogy meglássuk, mely nemek képviselői jelentkeznek gyakrabban hitelkártyákért. Ez a tudás lehetővé teszi a pénzintézetek számára, hogy jobban megértsék és célzottabban alakítsák ki a hitelkártya ajánlataikat és marketing stratégiáikat, figyelembe véve a nemek közötti pénzügyi szokások és igények különbségeit.')
   
 # # Csoportos oszlopdiagram létrehozása
 # fig = plt.figure(figsize=(10, 8))
@@ -109,7 +108,7 @@ st.plotly_chart(fig)
 
 chart = alt.Chart()
 
-st.info('A családi állapot,foglalkozás és lakóhely típusa közötti összefüggéseket a hitelképességgel kapcsolatban a háromdimenziós felületi diagram szemléltet. Az eredmények alapján megállapíthatjuk, hogy például házas családos emberek esetében gyakran jobb a hitelképesség, míg egyedülállók vagy élettársakkal élők körében ez eltérhet. Emellett a hosszabb munkaviszony gyakran kedvező hatással van a hitelképességre, míg a rövidebb foglalkoztatási időszakok esetén magasabb lehet a kockázat. A lakóhely típusa (például városi vagy vidéki) szintén jelentős tényező lehet: a nagyvárosokban élők esetében esetlegesen jobb a hitelképesség, mivel magasabb jövedelmi szint és stabilitás tapasztalható.')
+st.markdown('A családi állapot,foglalkozás és lakóhely típusa közötti összefüggéseket a hitelképességgel kapcsolatban a háromdimenziós felületi diagram szemléltet. Az eredmények alapján megállapíthatjuk, hogy például házas családos emberek esetében gyakran jobb a hitelképesség, míg egyedülállók vagy élettársakkal élők körében ez eltérhet. Emellett a hosszabb munkaviszony gyakran kedvező hatással van a hitelképességre, míg a rövidebb foglalkoztatási időszakok esetén magasabb lehet a kockázat. A lakóhely típusa (például városi vagy vidéki) szintén jelentős tényező lehet: a nagyvárosokban élők esetében esetlegesen jobb a hitelképesség, mivel magasabb jövedelmi szint és stabilitás tapasztalható.')
 
 
 # kodreszlet 3
@@ -135,7 +134,8 @@ fig1 = px.scatter_3d(df,
                      color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
                     )
 
-st.info('A vizualizáció szemlélteti, hogyan befolyásolják a családi állapot, a foglalkozás és lakóhely típusa a hitelképességet, külön kiemelve a jóváhagyott és elutasított hitelképességeket.A vizualizációk alapján számos fontos következtetést vonhatunk le a családi állapot, évek a foglalkozásban és lakóhely típusa közötti összefüggésekről a hitelképességgel kapcsolatban. Először is, látható, hogy bizonyos családi állapotok és hosszú távú munkatapasztalat jobb hitelképességet eredményezhetnek, míg másoknál ez gyengébb lehet. Ez arra utal, hogy ezek a társadalmi-gazdasági tényezők meghatározó szerepet játszanak az egyének pénzügyi stabilitásában és hitelminősítésében. Az összefüggések tanulmányozása lehetővé teszi a pénzügyi szolgáltatók számára, hogy mélyebben megértsék, milyen társadalmi-gazdasági tényezők játszanak szerepet az egyének pénzügyi stabilitásában és hitelképességében.')
+st.plotly_chart(fig1)
+st.markdown('A vizualizáció szemlélteti, hogyan befolyásolják a családi állapot, évek a  foglalkozásban és lakóhely típusa a hitelképességet, külön kiemelve a jóváhagyott és elutasított hitelképességeket.A vizualizációk alapján számos fontos következtetést vonhatunk le a családi állapot, évek a foglalkozásban és lakóhely típusa közötti összefüggésekről a hitelképességgel kapcsolatban. Először is, látható, hogy bizonyos családi állapotok és hosszú távú munkatapasztalat jobb hitelképességet eredményezhetnek, míg másoknál ez gyengébb lehet. Ez arra utal, hogy ezek a társadalmi-gazdasági tényezők meghatározó szerepet játszanak az egyének pénzügyi stabilitásában és hitelminősítésében. Az összefüggések tanulmányozása lehetővé teszi a pénzügyi szolgáltatók számára, hogy mélyebben megértsék, milyen társadalmi-gazdasági tényezők játszanak szerepet az egyének pénzügyi stabilitásában és hitelképességében.')
 
 # 2. Vizualizáció: Jövedelem, Végzettség és Évek a foglalkozásban
 fig2 = px.scatter_3d(df, 
@@ -154,7 +154,7 @@ fig2 = px.scatter_3d(df,
                     )
 
 
-st.info('A második vizualizáció fókuszában a jövedelem, végzettség és évek a foglalkozásban szerepelnek, és ezek kapcsán mutatja be, hogyan határozzák meg ezek a tényezők az egyén hitelképességét. Azok az egyének, akik magasabb jövedelemmel rendelkeznek és jobb végzettséggel bírnak stabilabb hitelképességgel rendelkeznek. Ez annak tudható be, hogy ezek az emberek képesek hatékonyan kezelni pénzügyi kötelezettségeiket és hosszú távú pénzügyi stabilitást biztosítani számukra.')
+st.markdown('A második vizualizáció fókuszában a jövedelem, végzettség és évek a foglalkozásban szerepelnek, és ezek kapcsán mutatja be, hogyan határozzák meg ezek a tényezők az egyén hitelképességét. Azok az egyének, akik magasabb jövedelemmel rendelkeznek és jobb végzettséggel bírnak stabilabb hitelképességgel rendelkeznek. Ez annak tudható be, hogy ezek az emberek képesek hatékonyan kezelni pénzügyi kötelezettségeiket és hosszú távú pénzügyi stabilitást biztosítani számukra.')
 # Streamlit oldalon való megjelenítés
 st.plotly_chart(fig1)
 st.plotly_chart(fig2)
@@ -187,6 +187,8 @@ fig = px.bar(
 # Diagram megjelenítése
 st.plotly_chart(fig)
 
+st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem.')
+        
 #pleda5 
 import pandas as pd
 import plotly.express as px
