@@ -7,12 +7,6 @@ import plotly.express as px
 
 st.set_page_config(page_title='Hitelkártya jogosultságot meghatározó tényezők', page_icon='📊')
 st.title('📊 Hitelkártya jogosultságot meghatározó tényezők')
-
-with st.expander('About this app'):
-  st.markdown('**What can this app do?**')
-  st.info('This app shows the use of Pandas for data wrangling, Altair for chart creation and editable dataframe for data interaction.')
-  st.markdown('**How to use the app?**')
-  st.warning('To engage with the app, 1. Select genres of your interest in the drop-down selection box and then 2. Select the year duration from the slider widget. As a result, this should generate an updated editable DataFrame and line plot.')
   
 st.subheader('Adatok')
 df = pd.read_csv('dataset/creditcard_eligibility_dataset.csv')
@@ -39,13 +33,14 @@ st.altair_chart(age_hist, use_container_width=True)
 
 st.markdown('A korosztály szerinti eloszlás elemzése lehetővé teszi, hogy azonosítsuk azokat a korcsoportokat, amelyek dominálnak a hiteligénylők között és leginkább érdeklődnek a hitelkártyák irénylésére és segít abban, hogy felismerjük, mely korosztályok kevésbé képviselték magukat a hitelpiacon.')
 
+df['Nem'] = df['Gender'].replace({0: 'Férfi', 1: 'Nő'})
 
 # Displaying gender distribution using a count bar chart
 st.header('Egyének nem szerinti eloszlása')
 gender_chart = alt.Chart(df).mark_bar().encode(
-    alt.X('Gender:N', title='Gender'),
+    alt.X('Nem:N', title='Nem'),
     alt.Y('count()', title='Number of Applicants'),
-    tooltip=['Gender:N', 'count()']
+    tooltip=['Nem:N', 'count()']
 ).properties(
     title='Gender Distribution',
     width=700,
@@ -54,15 +49,27 @@ gender_chart = alt.Chart(df).mark_bar().encode(
 st.altair_chart(gender_chart, use_container_width=True)
 
 st.markdown('Hitelkártya jogosultsági szempontból a nemek eloszlásának szemléltetése az elemzésben segítséget nyújt abban, hogy meglássuk, mely nemek képviselői jelentkeznek gyakrabban hitelkártyákért. Ez a tudás lehetővé teszi a pénzintézetek számára, hogy jobban megértsék és célzottabban alakítsák ki a hitelkártya ajánlataikat és marketing stratégiáikat, figyelembe véve a nemek közötti pénzügyi szokások és igények különbségeit.')
-  
 
-st.subheader('A változok közötti kapcsolatok tanulmányozása')
-
-#2
 df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
 
-# Streamlit cím
-st.title("Végzettség és hitelképesség összefüggése")
+st.header('Hitelképesség szerinti eloszlása')
+st.subheader('Hitelképesség változó, amely azt jelzi, hogy az egyén jogosult-e hitelkártyára vagy sem (pl. Igen/Nem, 1/0).')
+target_chart = alt.Chart(df).mark_bar().encode(
+    alt.X('Hitelképesség:N', title='Hitelképesség'),
+    alt.Y('count()', title='Number of Applicants'),
+    tooltip=['Hitelképesség:N', 'count()']
+).properties(
+    title='Hitelképesség eloszlása',
+    width=700,
+    height=400
+).interactive()
+st.altair_chart(target_chart, use_container_width=True)
+
+st.title('A változok közötti kapcsolatok tanulmányozása')
+
+#2
+
+st.header("Végzettség és hitelképesség összefüggése")
 
 # Grouped Bar Chart létrehozása
 fig = px.bar(
@@ -77,14 +84,25 @@ fig = px.bar(
 # Diagram megjelenítése
 st.plotly_chart(fig)
 
-st.markdown('')
+st.markdown('Az alábbi vizualizáció egy csoportosított oszlopdiagram, amely bemutatja, hogyan oszlik meg a hitelképesség a különböző végzettségi szintek között. Az ábra célja, hogy rávilágítson arra, milyen hatással van a végzettség szintje a hitelkérelmek jóváhagyására vagy elutasítására.A diagramról egyértelműen látszik, hogy a magasabb végzettséggel rendelkező egyének, például az egyetemi vagy felsőfokú végzettséggel rendelkező személyek, jelentősen nagyobb arányban kapják meg a hitelkártya-igénylésük jóváhagyását. Ezzel szemben azok, akik alacsonyabb végzettséggel rendelkeznek, gyakrabban találkoznak hitelkérelmük elutasításával. A különböző végzettségi kategóriákhoz tartozó egyének számát az oszlopok magassága mutatja')
+
+st.header("Jövedelem típus és hitelképesség összefüggése")
+
+# Grouped Bar Chart létrehozása
+fig = px.bar(
+    df,
+    x='Income_type',
+    y='ID',  # Számolja meg az egyéneket
+    color='Hitelképesség',
+    barmode='group',
+    labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus'},
+    title='Jövedelem típus és hitelképesség összefüggése'
+)
 
 # Diagram megjelenítése
 st.plotly_chart(fig)
-# kodreszlet 3
 
-# Színezéshez a hitelképesség átnevezése
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
+# kodreszlet 3
 
 # 1. Vizualizáció: Családi állapot, Évek a foglalkozásban és Lakóhely típusa
 fig1 = px.scatter_3d(df, 
@@ -99,7 +117,9 @@ fig1 = px.scatter_3d(df,
                          'Housing_type': 'Lakóhely típusa',
                          'Hitelképesség': 'Hitelképesség'
                      },
-                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
+                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'},
+                     height=700,
+                     width=900
                     )
 
 st.plotly_chart(fig1)
@@ -118,143 +138,12 @@ fig2 = px.scatter_3d(df,
                          'Years_employed': 'Évek a foglalkozásban',
                          'Hitelképesség': 'Hitelképesség'
                      },
-                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'}
+                     color_discrete_map={'Jóváhagyott': 'green', 'Elutasított': 'red'},
+                     height=700,
+                     width=900
                     )
 
 st.plotly_chart(fig2)
 st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem. Azok az egyének, akik magasabb jövedelemmel rendelkeznek és jobb végzettséggel bírnak stabilabb hitelképességgel rendelkeznek.')
-
-#kodreszlet4
-
-# Hitelképesség megjelölése
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Jövedelem típus és végzettség összefüggése hitelképesség alapján")
-
-# Grouped Bar Chart létrehozása
-fig = px.bar(
-    df,
-    x='Income_type',
-    y='ID',  # Számolja meg az egyéneket
-    color='Hitelképesség',
-    barmode='group',
-    facet_col='Education_type',
-    labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus', 'Education_type': 'Végzettség'},
-    title='Jövedelem típus és végzettség összefüggése hitelképesség alapján'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
-
-st.markdown('Az ábra azt mutatja, hogyan függ össze a jövedelem típusa és a végzettség a hitelképességgel. \
-            A diagram csoportos oszlopdiagram formájában ábrázolja, hogy az egyes jövedelem típusok és végzettségek \
-            szerint hány egyént jelöltek meg hitelképességi státusszal. A színek különbsége azt jelzi, hogy az egyének\
-             mennyire lettek jóváhagyva vagy elutasítva hitelkérelmükkel.A vizualizációból látható, hogy bizonyos jövedelem típusok és végzettségek esetén magasabb a jóváhagyott hitelképességi arány, míg más esetekben alacsonyabb. A magasabb végzettséggel rendelkezők és bizonyos jövedelem típusok esetén nagyobb eséllyel jóváhagyott a hitelkérelem.')
-        
-#pleda5 
-
-# Hitelképesség megjelölése
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Jövedelem típus és végzettség összefüggése hitelképesség alapján")
-
-# Grouped Bar Chart létrehozása
-fig = px.bar(
-    df,
-    x='Income_type',
-    y='ID',  # Számolja meg az egyéneket
-    color='Hitelképesség',
-    barmode='group',
-    facet_col='Education_type',
-    #labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus', 'Education_type': 'Végzettség'},
-    #title='Jövedelem típus és végzettség összefüggése hitelképesség alapján'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
-
-#6
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Végzettség és hitelképesség összefüggése")
-
-# Grouped Bar Chart létrehozása
-fig = px.bar(
-    df,
-    x='Education_type',
-    y='ID',  # Számolja meg az egyéneket
-    color='Hitelképesség',
-    barmode='group',
-    labels={'ID': 'Egyének száma', 'Education_type': 'Végzettség'},
-    #title='Végzettség és hitelképesség összefüggése'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
-
-#5.2
-# Hitelképesség megjelölése
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Jövedelem típus és hitelképesség összefüggése")
-
-# Grouped Bar Chart létrehozása
-fig = px.bar(
-    df,
-    x='Income_type',
-    y='ID',  # Számolja meg az egyéneket
-    color='Hitelképesség',
-    barmode='group',
-    labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus'},
-    title='Jövedelem típus és hitelképesség összefüggése'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
-
-#7
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Kor és jövedelem hatása hitelképességre")
-
-# Heatmap létrehozása
-fig = px.density_heatmap(
-    df,
-    x='Age',
-    y='Total_income',
-    z='Hitelképesség',
-    color_continuous_scale='Viridis',
-    labels={'Age': 'Kor', 'Total_income': 'Jövedelem', 'Hitelképesség': 'Hitelképesség'},
-    title='Kor és jövedelem hatása hitelképességre'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
-
-#kodreszlet3
-
-# Hitelképesség megjelölése
-df['Hitelképesség'] = df['Target'].replace({0: 'Elutasított', 1: 'Jóváhagyott'})
-
-# Streamlit cím
-st.title("Jövedelem típus és végzettség összefüggése hitelképesség alapján")
-
-# Grouped Bar Chart létrehozása
-fig = px.bar(
-    df,
-    x='Income_type',
-    y='ID',  # Számolja meg az egyéneket
-    color='Hitelképesség',
-    barmode='group',
-    facet_col='Education_type',
-    labels={'ID': 'Egyének száma', 'Income_type': 'Jövedelem típus', 'Education_type': 'Végzettség'},
-    title='Jövedelem típus és végzettség összefüggése hitelképesség alapján'
-)
-
-# Diagram megjelenítése
-st.plotly_chart(fig)
+st.subheader('Következtetések')
+st.markdown('Az elemzésből nyert vizualizációk alapján látszik, hogy a hitelképességet több tényező is befolyásolja, köztük a végzettség, a jövedelem típusa, a családi állapot, az évek a foglalkozásban és a lakóhely típusa.A magasabb végzettséggel rendelkező egyének, mint például az egyetemi vagy felsőfokú végzettséggel rendelkezők, nagyobb arányban kapják meg a hitelkártya-igénylésük jóváhagyását. Az alacsonyabb végzettséggel rendelkezők gyakrabban találkoznak hitelkérelmük elutasításával. Ez arra utal, hogy a pénzügyi intézmények magasabb kockázatot látnak az alacsonyabb végzettségű egyének esetében, míg a magasabb végzettségűek stabilabb pénzügyi hátteret és nagyobb fizetőképességet sugallnak.Azok az egyének, akik stabil és magasabb jövedelemmel rendelkeznek, valamint magasabb végzettséggel bírnak, jelentősen jobb hitelképességgel rendelkeznek. A pénzügyi intézmények valószínűleg biztonságosabb befektetésként tekintenek ezekre az egyénekre, mivel nagyobb eséllyel tudják kezelni pénzügyi kötelezettségeiket.Az adatokból kiderül, hogy a házas családos emberek hitelképessége gyakran jobb, mint az egyedülállóké vagy élettársakkal élőké. Ez valószínűleg annak köszönhető, hogy a házasok gyakran stabilabb pénzügyi háttérrel és felelősségtudattal rendelkeznek.A hosszabb munkaviszony általában kedvező hatással van a hitelképességre. Azok, akik hosszabb ideje dolgoznak egy munkahelyen, valószínűleg stabilabb jövedelemmel és pénzügyi háttérrel rendelkeznek, ami pozitívan befolyásolja a hitelkérelmük sikerességét. A nagyvárosokban élők esetében jobb lehet a hitelképesség, mivel magasabb jövedelmi szint és stabilitás tapasztalható. A vidéki területeken élők esetében a hitelképesség alacsonyabb lehet, ami a jövedelmi szintek és gazdasági lehetőségek különbségeiből adódhat.')
